@@ -27,6 +27,7 @@ public class Program {
 
             String line = bf.readLine();
             while (line != null){
+                line = removeUTF8BOM(line);
                 String[] fields = line.split(",");
                 employeeList.add(new Employee(fields[0], fields[1], Double.parseDouble(fields[2])));
                 line = bf.readLine();
@@ -45,7 +46,8 @@ public class Program {
             emailList.forEach(System.out::println);
 
             double sum = employeeList.stream()
-            .filter(employee -> employee.getName().charAt(0) == 'M')
+                    //.filter(employee -> {System.out.println(employee.getName().charAt(0));return true;})
+            .filter(employee -> employee.getName().startsWith("M"))
             .map(employee -> employee.getSalary()).reduce(0.0,Double::sum);
 
             System.out.printf("A soma dos salarios dos funcionários que começam com M é: %.2f", sum );
@@ -53,5 +55,14 @@ public class Program {
         }catch (IOException e){
             System.out.println("Error: " + e.getMessage());
         }
+    }
+
+    public static final String UTF8_BOM = "\uFEFF";
+
+    private static String removeUTF8BOM(String s){
+        if (s.startsWith(UTF8_BOM)) {
+            s = s.substring(1);
+        }
+        return s;
     }
 }
